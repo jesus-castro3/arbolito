@@ -1,68 +1,76 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { View, StyleSheet, RefreshControl } from 'react-native';
-import { FlatList, Switch, TextInput } from 'react-native-gesture-handler';
-import PalettePreview from '../components/PalettePreview';
+import React from 'react';
+import {
+  View,
+  StyleSheet,
+  Text,
+  SafeAreaView,
+  TouchableOpacity,
+} from 'react-native';
+import { PALETTE } from '../utils/theme';
+import { MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons';
 
 const Home = ({ navigation }) => {
-  const [value1, setValue1] = useState('');
-  const [colorPalettes, setColorPalettes] = useState([]);
-  const [isRefreshing, setIsRefreshing] = useState(false);
-
-  const fetchColorPalettes = useCallback(async () => {
-    const result = await fetch(
-      'https://color-palette-api.kadikraman.now.sh/palettes',
-    );
-    if (result.ok) {
-      const palettes = await result.json();
-      setColorPalettes(palettes);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchColorPalettes();
-  }, [fetchColorPalettes]);
-
-  const handleRefresh = useCallback(async () => {
-    setIsRefreshing(true);
-    await fetchColorPalettes();
-    setTimeout(() => {
-      setIsRefreshing(false);
-    }, 1000);
-  }, [fetchColorPalettes]);
+  const openModal = () => {
+    navigation.navigate('NewTreeProposal');
+  };
 
   return (
-    <View style={styles.container}>
-      <TextInput
-        value={value1}
-        secureTextEntry
-        onChangeText={setValue1}
-        placeholder="Input your name"
-      />
-      <FlatList
-        data={colorPalettes}
-        keyExtractor={(item, idx) => item.paletteName + idx}
-        refreshControl={
-          <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />
-        }
-        renderItem={({ item }) => (
-          <PalettePreview
-            handlePress={() =>
-              navigation.navigate('ColorPalette', {
-                paletteName: 'Solarized',
-                colors: item.colors,
-              })
-            }
-            colorPalette={item}
+    <SafeAreaView>
+      <View style={styles.container}>
+        <Text>The map will be here</Text>
+        <TouchableOpacity
+          style={styles.treeButtonContainer}
+          onPress={openModal}
+        >
+          <FontAwesome
+            style={styles.pluscircleo}
+            name="plus-square"
+            size={16}
+            color={PALETTE.teal}
           />
-        )}
-      />
-    </View>
+          <MaterialCommunityIcons
+            name="tree-outline"
+            size={44}
+            color={PALETTE.teal}
+          />
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    padding: 10,
+    marginTop: 20,
+    position: 'relative',
+    height: '100%',
+  },
+  treeButtonContainer: {
+    width: 70,
+    height: 70,
+    position: 'absolute',
+    bottom: 50,
+    right: 10,
+    borderRadius: 50,
+    backgroundColor: PALETTE.green,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderColor: PALETTE.teal,
+    borderWidth: 3,
+    shadowOpacity: 0.4,
+  },
+  treeButton: {
+    width: 55,
+    height: 55,
+  },
+  pluscircleo: {
+    position: 'absolute',
+    top: 15,
+    left: 15,
+    zIndex: 100,
+    width: 15,
+    fontWeight: 'bold',
+    backgroundColor: PALETTE.green,
   },
 });
 
